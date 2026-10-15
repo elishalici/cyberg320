@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#080b12">
+<title>ПАРОВОЗИК КОТОРЫЙ СМОГ // CONTRACT</title>
+<style>
+:root{--bg:#070a10;--panel:#0b111b;--cyan:#5cf6ff;--pink:#ff3f9d;--muted:#8aa0b7;--line:rgba(92,246,255,.28);--white:#e9f7ff}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:radial-gradient(ellipse at 50% 0%,#10213a 0,#070a10 48%,#030509 100%);color:var(--white);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100vh;overflow-x:hidden}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.14;background:repeating-linear-gradient(0deg,transparent 0 3px,rgba(92,246,255,.11) 4px,transparent 5px);z-index:10}
+button{font:inherit;cursor:pointer}
+.wrap{width:min(980px,100% - 32px);margin:auto}
+.topbar{display:flex;justify-content:space-between;align-items:center;padding:22px 0;border-bottom:1px solid var(--line);font-size:11px;letter-spacing:.18em;color:var(--cyan);text-transform:uppercase}
+.status{display:flex;align-items:center;gap:8px}.dot{width:7px;height:7px;border-radius:50%;background:var(--pink);box-shadow:0 0 12px var(--pink);animation:pulse 1.5s infinite}
+@keyframes pulse{50%{opacity:.3}}
+.hero{min-height:82vh;display:flex;flex-direction:column;justify-content:center;padding:60px 0 80px;position:relative}
+.eyebrow{font-size:12px;letter-spacing:.25em;color:var(--pink);text-transform:uppercase;margin-bottom:20px}
+h1{font-size:clamp(42px,9vw,94px);line-height:.94;letter-spacing:-.055em;text-transform:uppercase;margin:0;max-width:850px;text-shadow:0 0 28px rgba(255,63,157,.22)}
+h1 span{display:block;color:var(--cyan)}
+.hero p{max-width:560px;line-height:1.7;color:#a9b9c9;font-size:16px;margin:26px 0 32px}
+.btn{border:1px solid var(--cyan);color:var(--cyan);background:rgba(92,246,255,.07);padding:15px 20px;letter-spacing:.1em;text-transform:uppercase;font-size:12px;font-weight:800;clip-path:polygon(0 0,calc(100% - 14px) 0,100% 14px,100% 100%,0 100%);transition:.2s}
+.btn:hover{background:var(--cyan);color:#061018;box-shadow:0 0 25px rgba(92,246,255,.25)}
+.btn.pink{border-color:var(--pink);color:var(--pink);background:rgba(255,63,157,.07)}
+.btn.pink:hover{background:var(--pink);color:white}
+.hero-meta{display:flex;gap:24px;flex-wrap:wrap;margin-top:34px;color:#688096;font-size:10px;letter-spacing:.16em}
+section{padding:70px 0;border-top:1px solid var(--line);display:none;animation:appear .6s ease}
+section.active{display:block}
+@keyframes appear{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.stephead{display:flex;align-items:center;gap:14px;color:var(--pink);font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:16px}
+.stepnum{border:1px solid var(--pink);padding:7px 9px}
+h2{font-size:clamp(28px,5vw,52px);line-height:1.02;text-transform:uppercase;margin:0 0 20px;letter-spacing:-.035em}
+.lead{color:#a8b8c8;line-height:1.7;max-width:680px}
+.card{margin:28px 0;border:1px solid var(--line);background:linear-gradient(135deg,rgba(16,31,48,.88),rgba(6,10,17,.94));padding:16px;position:relative}
+.card:before{content:"";position:absolute;top:-1px;left:-1px;width:70px;height:2px;background:var(--cyan);box-shadow:0 0 12px var(--cyan)}
+.card img{display:block;width:100%;height:auto;max-height:570px;object-fit:contain;background:#020408}
+.caption{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:14px 2px 0;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--cyan)}
+.specgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:18px}
+.spec{border:1px solid rgba(138,160,183,.2);padding:13px;background:rgba(255,255,255,.02)}
+.spec small{display:block;color:var(--muted);font-size:9px;letter-spacing:.14em;text-transform:uppercase;margin-bottom:7px}
+.spec strong{font-size:14px}
+.chat{border:1px solid rgba(255,63,157,.45);background:rgba(255,63,157,.045);padding:20px;margin:25px 0;max-width:720px}
+.chathead{font-size:10px;color:var(--pink);letter-spacing:.2em;margin-bottom:14px}
+.chat p{line-height:1.7;margin:0;color:#d9e7f2}
+.chat .highlight{color:var(--cyan);font-size:clamp(21px,4vw,34px);font-weight:900;line-height:1.15;display:block;margin:16px 0;text-transform:uppercase}
+.reward{position:relative;overflow:hidden}
+.reward img{width:100%;display:block;filter:brightness(.65);transition:filter 1.4s,transform 2s}
+.reward.revealed img{filter:brightness(1);transform:scale(1.015)}
+.reward-overlay{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:22px;background:linear-gradient(0deg,rgba(2,5,10,.85),rgba(2,5,10,.1) 65%)}
+.reward-title{font-size:clamp(12px,2vw,20px);letter-spacing:.3em;color:var(--cyan);text-shadow:0 0 14px var(--cyan)}
+.reward-name{font-size:clamp(28px,6vw,66px);font-weight:950;line-height:1;text-transform:uppercase;text-shadow:0 0 28px #000;margin:16px 0}
+.reward-copy{font-size:clamp(12px,2vw,16px);letter-spacing:.14em;text-transform:uppercase}
+.finalnote{text-align:center;padding:50px 0 20px}
+.finalnote h2{color:var(--cyan)}
+.finalnote p{color:#9aafc3;line-height:1.8}
+.footer{border-top:1px solid var(--line);padding:24px 0 40px;color:#526a7f;font-size:9px;letter-spacing:.15em;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.hidden{display:none!important}
+.progress{height:2px;background:#172332;margin:0 0 35px}.progress span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--pink),var(--cyan));transition:width .4s}
+.smallnote{font-size:10px;color:#637d93;letter-spacing:.12em;margin-top:20px}
+@media(max-width:600px){.topbar{font-size:9px}.hero{min-height:75vh;padding:50px 0}.hero p{font-size:14px}.specgrid{grid-template-columns:1fr}.card{padding:9px}.caption{font-size:8px}.btn{width:100%;padding:15px 10px}.hero-meta{gap:12px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="topbar">
+    <div>NC // FIXER NETWORK</div>
+    <div class="status"><span class="dot"></span> ENCRYPTED CONNECTION</div>
+  </header>
+
+  <main>
+    <div class="hero" id="intro">
+      <div class="eyebrow">Incoming job // Classified</div>
+      <h1>Паровозик <span>который смог</span></h1>
+      <p>Входящий контракт. Клиент скрывает личность. Цель — обнаружить объект, подтвердить его местонахождение и завершить операцию.</p>
+      <button class="btn" onclick="startMission()">[ ПРИНЯТЬ ЗАКАЗ ]</button>
+      <div class="hero-meta"><span>CONTRACT № 320-G20</span><span>THREAT LEVEL: UNKNOWN</span><span>REWARD: CLASSIFIED</span></div>
+    </div>
+
+    <div class="progress"><span id="progressbar"></span></div>
+
+    <section id="step1">
+      <div class="stephead"><span class="stepnum">01</span> TARGET FILE // ДОСЬЕ ЦЕЛИ</div>
+      <h2>Объект обнаружен</h2>
+      <p class="lead">Клиент передал ориентир. Сверь данные и подтверди, что найден именно нужный автомобиль.</p>
+      <div class="card">
+        <img src="assets/target-ad.jpg" alt="Объявление с фотографией синей BMW" />
+        <div class="caption"><span>Visual reference // Target 001</span><span>Status: for sale → secured</span></div>
+      </div>
+      <div class="specgrid">
+        <div class="spec"><small>Модель</small><strong>BMW 320d xDrive G20</strong></div>
+        <div class="spec"><small>Год</small><strong>2019</strong></div>
+        <div class="spec"><small>Комплектация</small><strong>M Sport Pure</strong></div>
+        <div class="spec"><small>Двигатель</small><strong>2.0 Diesel · 190 HP</strong></div>
+      </div>
+      <p class="smallnote">CLIENT NOTE: «Ты узнаешь её, когда увидишь».</p>
+      <button class="btn" onclick="goStep(2)">[ ЦЕЛЬ ПОДТВЕРЖДЕНА → ]</button>
+    </section>
+
+    <section id="step2">
+      <div class="stephead"><span class="stepnum">02</span> OPERATION LOG // ТОМИЛИНО</div>
+      <h2>След потерян</h2>
+      <p class="lead">Операция прошла успешно. Объект вне исходной точки. Отправь заказчику подтверждение выполнения.</p>
+      <div class="card">
+        <img src="assets/tomilino-front.jpg" alt="Синяя BMW ночью, вид спереди" />
+        <div class="caption"><span>Evidence A // Front view</span><span>Location: Tomilino</span></div>
+      </div>
+      <div class="card">
+        <img src="assets/tomilino-rear.jpg" alt="Синяя BMW ночью, вид сзади" />
+        <div class="caption"><span>Evidence B // Rear view</span><span>Transmission: encrypted</span></div>
+      </div>
+      <button class="btn pink" onclick="sendEvidence()">[ ОТПРАВИТЬ ФОТО ЗАКАЗЧИКУ ]</button>
+      <div id="evidenceSent" class="chat hidden">
+        <div class="chathead">SYSTEM // MESSAGE SENT</div>
+        <p>Доказательства отправлены. Ожидание ответа клиента<span class="blink"> ▍</span></p>
+        <br><button class="btn" onclick="goStep(3)">[ ПРОЧИТАТЬ ОТВЕТ → ]</button>
+      </div>
+    </section>
+
+    <section id="step3">
+      <div class="stephead"><span class="stepnum">03</span> INCOMING MESSAGE // UNKNOWN CLIENT</div>
+      <h2>Условия сделки изменены</h2>
+      <p class="lead">Получено зашифрованное сообщение. Отправитель подтвердил выполнение контракта.</p>
+      <div class="chat">
+        <div class="chathead">UNKNOWN CLIENT // 00:47 AM</div>
+        <p>Фото получил. Работа выполнена безупречно.</p>
+        <p>Но есть одна деталь, которую тебе забыли сообщить.</p>
+        <span class="highlight">ЭТА МАШИНА — ТВОЁ ВОЗНАГРАЖДЕНИЕ.</span>
+        <p>Контракт закрыт. Ключи — у тебя. Теперь это твоя история.</p>
+      </div>
+      <button class="btn pink" onclick="revealReward()">[ ЗАБРАТЬ ВОЗНАГРАЖДЕНИЕ → ]</button>
+    </section>
+
+    <section id="step4">
+      <div class="stephead"><span class="stepnum">04</span> CONTRACT COMPLETED</div>
+      <h2>Reward unlocked</h2>
+      <p class="lead">Объект больше не цель. Теперь он принадлежит легенде.</p>
+      <div class="card reward" id="rewardCard">
+        <img src="assets/reward.jpg" alt="Синяя BMW G20 в драматичной подсветке" />
+        <div class="reward-overlay">
+          <div class="reward-title">REWARD UNLOCKED</div>
+          <div class="reward-name">BMW 320d<br>G20</div>
+          <div class="reward-copy">GENNADIY VERBITSKII // OWNER</div>
+        </div>
+      </div>
+      <div class="finalnote">
+        <h2>С днём рождения, Ген! ❤️</h2>
+        <p>Некоторые машины — больше, чем просто машины.<br>Они становятся частью нашей истории.<br><strong>Люблю тебя.</strong></p>
+        <button class="btn" onclick="replay()">[ ПОВТОРИТЬ МИССИЮ ]</button>
+      </div>
+    </section>
+  </main>
+  <footer class="footer"><span>PAROVOZIK // PRIVATE CONTRACT</span><span>MADE FOR GENNADIY VERBITSKII ♥</span></footer>
+</div>
+<script>
+let currentStep=0;
+function startMission(){
+ document.getElementById('intro').classList.add('hidden');
+ document.querySelector('.progress').style.display='block';
+ goStep(1);
+}
+function goStep(n){
+ currentStep=n;
+ document.querySelectorAll('main section').forEach(s=>s.classList.remove('active'));
+ const el=document.getElementById('step'+n);
+ el.classList.add('active');
+ document.getElementById('progressbar').style.width=({1:25,2:50,3:75,4:100}[n]||0)+'%';
+ window.scrollTo({top:0,behavior:'smooth'});
+}
+function sendEvidence(){
+ document.getElementById('evidenceSent').classList.remove('hidden');
+ document.querySelector('#step2 .btn.pink').textContent='[ ФОТО ОТПРАВЛЕНЫ ✓ ]';
+ document.querySelector('#step2 .btn.pink').disabled=true;
+}
+function revealReward(){
+ goStep(4);
+ setTimeout(()=>document.getElementById('rewardCard').classList.add('revealed'),250);
+}
+function replay(){
+ document.querySelectorAll('main section').forEach(s=>s.classList.remove('active'));
+ document.getElementById('intro').classList.remove('hidden');
+ document.getElementById('evidenceSent').classList.add('hidden');
+ document.querySelector('#step2 .btn.pink').disabled=false;
+ document.querySelector('#step2 .btn.pink').textContent='[ ОТПРАВИТЬ ФОТО ЗАКАЗЧИКУ ]';
+ document.getElementById('rewardCard').classList.remove('revealed');
+ document.querySelector('.progress').style.display='none';
+ document.getElementById('progressbar').style.width='0';
+ window.scrollTo({top:0,behavior:'smooth'});
+}
+document.querySelector('.progress').style.display='none';
+</script>
+</body>
+</html>
