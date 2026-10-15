@@ -66,9 +66,9 @@ h2{font-size:clamp(28px,5vw,52px);line-height:1.02;text-transform:uppercase;marg
 .route-map{position:relative;width:100%;overflow:hidden;line-height:0;border:1px solid rgba(92,246,255,.2);background:#03070c;isolation:isolate}
 .map-zoom-layer{position:relative;width:100%;transform:scale(1);transform-origin:57.5% 31.3%;transition:transform 1.7s cubic-bezier(.2,.8,.2,1),transform-origin 1.7s cubic-bezier(.2,.8,.2,1)}
 .map-zoom-layer>img{display:block;width:100%;height:auto;opacity:.84}
-.route-map.stage0 .map-zoom-layer{transform:scale(2.7);transform-origin:57.5% 31.3%}
-.route-map.stage1 .map-zoom-layer{transform:scale(2.7);transform-origin:81.5% 65.5%}
-.route-map.stage2 .map-zoom-layer{transform:scale(2.7);transform-origin:22.5% 17.5%}
+.route-map.zoom0 .map-zoom-layer{transform:scale(2.7);transform-origin:57.5% 31.3%}
+.route-map.zoom1 .map-zoom-layer{transform:scale(2.7);transform-origin:81.5% 65.5%}
+.route-map.zoom2 .map-zoom-layer{transform:scale(2.7);transform-origin:22.5% 17.5%}
 .route-svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
 .route-path{fill:none;stroke:#5cf6ff;stroke-width:7;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 5px #5cf6ff) drop-shadow(0 0 12px #ff3f9d);stroke-dasharray:2600;stroke-dashoffset:2600;transition:stroke-dashoffset 2.1s ease}
 .route-map.stage1 .route-path.first{stroke-dashoffset:0}
@@ -218,10 +218,12 @@ function showMap(stage){
  const map=document.getElementById('routeMap');
  map.classList.add('active');
  const canvas=document.getElementById('routeMapCanvas');
- canvas.classList.remove('stage0','stage1','stage2');
+ // Reset to the full map while it is visible, then animate toward the new coordinate.
+ canvas.classList.remove('zoom0','zoom1','zoom2','stage0','stage1','stage2');
  canvas.classList.add('stage'+stage);
  document.getElementById('pinTomilino').classList.toggle('locked',stage<1);
  document.getElementById('pinFinish').classList.toggle('locked',stage<2);
+ document.getElementById('stopStart').classList.add('unlocked');
  document.getElementById('stopTomilino').classList.toggle('unlocked',stage>=1);
  document.getElementById('stopFinish').classList.toggle('unlocked',stage>=2);
  const headings=[
@@ -235,6 +237,9 @@ function showMap(stage){
  document.getElementById('mapHelp').textContent=headings[stage][3];
  document.getElementById('progressbar').style.width=({0:10,1:40,2:70}[stage])+'%';
  window.scrollTo({top:0,behavior:'smooth'});
+ // Force a visible full-map frame before applying the zoom class.
+ void canvas.offsetWidth;
+ setTimeout(()=>canvas.classList.add('zoom'+stage),80);
 }
 function goStep(n){
  currentStep=n;
