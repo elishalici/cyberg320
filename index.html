@@ -63,8 +63,12 @@ h2{font-size:clamp(28px,5vw,52px);line-height:1.02;text-transform:uppercase;marg
 .route-shell{border:1px solid rgba(92,246,255,.35);background:rgba(5,10,18,.88);padding:12px;margin:26px 0;position:relative;overflow:hidden}
 .route-top{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;margin:0 0 12px;color:var(--cyan);font-size:10px;letter-spacing:.15em;text-transform:uppercase}
 .route-state{color:var(--pink)}
-.route-map{position:relative;width:100%;overflow:hidden;line-height:0;border:1px solid rgba(92,246,255,.2);background:#03070c}
-.route-map>img{display:block;width:100%;height:auto;opacity:.84}
+.route-map{position:relative;width:100%;overflow:hidden;line-height:0;border:1px solid rgba(92,246,255,.2);background:#03070c;isolation:isolate}
+.map-zoom-layer{position:relative;width:100%;transform:scale(1);transform-origin:57.5% 31.3%;transition:transform 1.7s cubic-bezier(.2,.8,.2,1),transform-origin 1.7s cubic-bezier(.2,.8,.2,1)}
+.map-zoom-layer>img{display:block;width:100%;height:auto;opacity:.84}
+.route-map.stage0 .map-zoom-layer{transform:scale(2.7);transform-origin:57.5% 31.3%}
+.route-map.stage1 .map-zoom-layer{transform:scale(2.7);transform-origin:81.5% 65.5%}
+.route-map.stage2 .map-zoom-layer{transform:scale(2.7);transform-origin:22.5% 17.5%}
 .route-svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
 .route-path{fill:none;stroke:#5cf6ff;stroke-width:7;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 5px #5cf6ff) drop-shadow(0 0 12px #ff3f9d);stroke-dasharray:2600;stroke-dashoffset:2600;transition:stroke-dashoffset 2.1s ease}
 .route-map.stage1 .route-path.first{stroke-dashoffset:0}
@@ -74,7 +78,7 @@ h2{font-size:clamp(28px,5vw,52px);line-height:1.02;text-transform:uppercase;marg
 .route-pin:hover,.route-pin:focus-visible{transform:translate(-50%,-50%) scale(1.12);outline:2px solid white;outline-offset:3px}
 .route-pin.pinkpin{border-color:var(--pink);color:var(--pink);box-shadow:0 0 0 5px #ff3f9d25,0 0 20px #ff3f9d99}
 .route-pin.locked{opacity:0;pointer-events:none;transform:translate(-50%,-50%) scale(.4)}
-.route-pin.startpin{left:57.5%;top:31.3%}.route-pin.tompin{left:81.5%;top:66.2%}.route-pin.finishpin{left:22.5%;top:16.5%}
+.route-pin.startpin{left:57.5%;top:31.3%}.route-pin.tompin{left:81.5%;top:65.5%}.route-pin.finishpin{left:22.5%;top:17.5%}
 .route-legend{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:12px}
 .route-stop{border:1px solid rgba(138,160,183,.23);padding:10px;background:rgba(255,255,255,.025);font-size:10px;color:#8ca3b8;line-height:1.45}
 .route-stop strong{display:block;color:#dffaff;font-size:11px;margin-bottom:3px}
@@ -83,6 +87,7 @@ h2{font-size:clamp(28px,5vw,52px);line-height:1.02;text-transform:uppercase;marg
 @media(max-width:600px){.route-shell{padding:7px}.route-pin{width:34px;height:34px;font-size:14px}.route-legend{grid-template-columns:1fr}.route-stop{padding:8px}}
 
 @media(max-width:600px){.topbar{font-size:9px}.hero{min-height:75vh;padding:50px 0}.hero p{font-size:14px}.specgrid{grid-template-columns:1fr}.card{padding:9px}.caption{font-size:8px}.btn{width:100%;padding:15px 10px}.hero-meta{gap:12px}}
+@media (prefers-reduced-motion:reduce){.map-zoom-layer,.route-path,section{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
 </style>
 </head>
 <body>
@@ -106,17 +111,16 @@ h2{font-size:clamp(28px,5vw,52px);line-height:1.02;text-transform:uppercase;marg
     <section id="routeMap">
       <div class="stephead"><span class="stepnum">ROUTE</span> NAVIGATION // MOSCOW REGION</div>
       <h2 id="mapHeading">Маршрут загружен не полностью</h2>
-      <p class="lead" id="mapLead">Система получила первую координату. Нажми на активную точку, чтобы открыть задание.</p>
+      <p class="lead" id="mapLead">Система получила первую координату. Карта приблизится к активной координате. Нажми на метку, чтобы открыть задание.</p>
       <div class="route-shell">
         <div class="route-top"><span>GPS // CONTRACT 320-G20</span><span class="route-state" id="routeState">1 / 3 COORDINATES FOUND</span></div>
         <div class="route-map stage0" id="routeMapCanvas">
-          <img src="route-map.jpg" alt="Киберпанк-карта маршрута по Москве и Московской области: старт, Томилино, финиш в Химках">
-          <svg class="route-svg" viewBox="0 0 1024 1536" preserveAspectRatio="none" aria-hidden="true">
-            <path class="route-path first" d="M589 480 L566 532 L594 565 L650 600 L655 675 L636 731 L687 784 L729 867 L775 930 L835 1017" /><path class="route-path second" d="M835 1017 L790 958 L750 890 L718 824 L675 770 L640 720 L585 680 L530 625 L470 590 L410 565 L350 520 L310 460 L270 395 L230 330 L230 252" />
-          </svg>
-          <button type="button" class="route-pin startpin" id="pinStart" aria-label="Открыть точку старта" title="Старт: Нововладыкинский проезд">⚑</button>
-          <button type="button" class="route-pin pinkpin tompin locked" id="pinTomilino" aria-label="Открыть точку Томилино" title="Томилино">Ⅱ</button>
-          <button type="button" class="route-pin pinkpin finishpin locked" id="pinFinish" aria-label="Открыть финиш в Химках" title="Финиш: Химки">⌂</button>
+          <div class="map-zoom-layer" id="mapZoomLayer">
+            <img src="route-map.jpg" alt="Киберпанк-карта маршрута по Москве и Московской области: старт, Томилино, финиш в Химках">
+            <button type="button" class="route-pin startpin" id="pinStart" aria-label="Открыть точку старта" title="Старт: Нововладыкинский проезд">⚑</button>
+            <button type="button" class="route-pin pinkpin tompin locked" id="pinTomilino" aria-label="Открыть точку Томилино" title="Томилино">Ⅱ</button>
+            <button type="button" class="route-pin pinkpin finishpin locked" id="pinFinish" aria-label="Открыть финиш в Химках" title="Финиш: Химки">⌂</button>
+          </div>
         </div>
         <div class="route-legend">
           <div class="route-stop unlocked" id="stopStart"><strong>01 · СТАРТ</strong>Нововладыкинский проезд, 1к3</div>
@@ -221,9 +225,9 @@ function showMap(stage){
  document.getElementById('stopTomilino').classList.toggle('unlocked',stage>=1);
  document.getElementById('stopFinish').classList.toggle('unlocked',stage>=2);
  const headings=[
-  ['Маршрут загружен не полностью','Система получила первую координату. Нажми на активную точку, чтобы открыть задание.','1 / 3 COORDINATES FOUND','Координата 01 доступна. Остальные точки откроются по мере прохождения контракта.'],
-  ['Следующая координата: Томилино','Цель подтверждена. Система прокладывает маршрут к точке, где объект был обнаружен после операции. Нажми на розовую метку Томилино.','2 / 3 COORDINATES FOUND','Маршрут до Томилино построен. Открой точку 02, чтобы передать фотодоказательства.'],
-  ['Финальная точка разблокирована','Доказательства приняты. Маршрут продолжается к финальной координате. Нажми на метку в Химках, чтобы завершить контракт.','3 / 3 COORDINATES FOUND','Все координаты получены. Точка в Химках ведёт к последнему сообщению заказчика.']
+  ['Маршрут загружен не полностью','Система получила первую координату. Карта приблизится к активной координате. Нажми на метку, чтобы открыть задание.','1 / 3 COORDINATES FOUND','Координата 01 доступна. Остальные точки откроются по мере прохождения контракта.'],
+  ['Следующая координата: Томилино','Цель подтверждена. Система прокладывает маршрут к точке, где объект был обнаружен после операции. Нажми на розовую метку Томилино.','2 / 3 COORDINATES FOUND','Карта приблизилась к Томилино. Открой точку 02, чтобы передать фотодоказательства.'],
+  ['Финальная точка разблокирована','Доказательства приняты. Маршрут продолжается к финальной координате. Нажми на метку в Химках, чтобы завершить контракт.','3 / 3 COORDINATES FOUND','Карта приблизилась к Химкам. Нажми на точку 03, чтобы прочитать последнее сообщение заказчика.']
  ];
  document.getElementById('mapHeading').textContent=headings[stage][0];
  document.getElementById('mapLead').textContent=headings[stage][1];
