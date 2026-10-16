@@ -166,7 +166,7 @@ h2{font-size:clamp(28px,5vw,52px);line-height:1.02;text-transform:uppercase;marg
       <div class="stephead"><span class="stepnum">02</span> OPERATION LOG // ТОМИЛИНО</div>
       <h2>След потерян</h2>
       <p class="lead">Операция прошла успешно. Объект вне исходной точки. Отправь заказчику подтверждение выполнения.</p>
-      <p class="lead">На рабочем столе обнаружена папка с уликами. Открой её и выбери обе фотографии из архива.</p>
+      <p class="lead">На рабочем столе обнаружена папка с уликами. Открой её и выбери оба файла.</p>
       <div class="desktop-window">
         <div class="desktop-bar"><span>REMOTE DESKTOP // TOMILINO NODE</span><span class="desktop-dots"><i></i><i></i><i></i></span></div>
         <div class="desktop-body">
@@ -266,20 +266,20 @@ function showMap(stage){
  window.scrollTo({top:0,behavior:'smooth'});
  const canvas=document.getElementById('routeMapCanvas');
  if(zoomTimer)clearTimeout(zoomTimer);
- const layer=document.getElementById('mapZoomLayer');
- layer.style.transform='translate(0px,0px) scale(1)';
- zoomTimer=setTimeout(()=>zoomToPoint(stage),90);
+ zoomTimer=setTimeout(()=>zoomToPoint(stage),60);
 }
 function zoomToPoint(stage){
  const canvas=document.getElementById('routeMapCanvas');
  const layer=document.getElementById('mapZoomLayer');
- const pin=document.getElementById(['pinStart','pinTomilino','pinFinish'][stage]);
- if(!canvas||!layer||!pin)return;
- const scale=2.35;
- const canvasRect=canvas.getBoundingClientRect();
- const pinRect=pin.getBoundingClientRect();
- const px=(pinRect.left+pinRect.width/2-canvasRect.left);
- const py=(pinRect.top+pinRect.height/2-canvasRect.top);
+ if(!canvas||!layer)return;
+ // Calculate from the map's untransformed layout dimensions, never from
+ // getBoundingClientRect() on the moving/zoomed pin. That prevents drift.
+ const positions=[{x:57.5,y:28},{x:81.5,y:73},{x:22,y:11}];
+ const point=positions[stage];
+ if(!point)return;
+ const scale=2.05;
+ const px=canvas.clientWidth*point.x/100;
+ const py=canvas.clientHeight*point.y/100;
  const x=canvas.clientWidth/2-px*scale;
  const y=canvas.clientHeight/2-py*scale;
  layer.style.transform=`translate(${x}px,${y}px) scale(${scale})`;
