@@ -12,6 +12,7 @@ html{scroll-behavior:smooth}
 body{margin:0;background:radial-gradient(ellipse at 50% 0%,#10213a 0,#070a10 48%,#030509 100%);color:var(--white);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100vh;overflow-x:hidden}
 body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.14;background:repeating-linear-gradient(0deg,transparent 0 3px,rgba(92,246,255,.11) 4px,transparent 5px);z-index:10}
 button{font:inherit;cursor:pointer}
+button:disabled{cursor:not-allowed;opacity:.5}
 .wrap{width:min(980px,100% - 32px);margin:auto}
 .topbar{display:flex;justify-content:space-between;align-items:center;padding:22px 0;border-bottom:1px solid var(--line);font-size:11px;letter-spacing:.18em;color:var(--cyan);text-transform:uppercase}
 .status{display:flex;align-items:center;gap:8px}.dot{width:7px;height:7px;border-radius:50%;background:var(--pink);box-shadow:0 0 12px var(--pink);animation:pulse 1.5s infinite}
@@ -60,45 +61,44 @@ h2{font-size:clamp(28px,5vw,52px);line-height:1.02;text-transform:uppercase;marg
 .progress{height:2px;background:#172332;margin:0 0 35px}.progress span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--pink),var(--cyan));transition:width .4s}
 .smallnote{font-size:10px;color:#637d93;letter-spacing:.12em;margin-top:20px}
 .highlight-inline{color:var(--pink)}
-.evidence-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:24px 0}
-.evidence-card{display:block;width:100%;padding:10px;text-align:left;color:var(--white);background:rgba(8,16,27,.9);border:1px solid rgba(138,160,183,.3);transition:border-color .2s,box-shadow .2s,transform .2s}
-.evidence-card img{display:block;width:100%;height:260px;object-fit:cover;background:#020408}
-.evidence-card .caption{display:flex;padding:12px 2px 2px;font-size:9px}
-.evidence-card.selected{border-color:var(--cyan);box-shadow:0 0 0 2px #5cf6ff35,0 0 22px #5cf6ff20;transform:translateY(-2px)}
-.evidence-card.selected .select-state{color:var(--cyan)}
 .analysis-track{height:4px;background:#1a2836;margin:18px 0 10px;overflow:hidden}
 .analysis-track span{display:block;width:0;height:100%;background:linear-gradient(90deg,var(--pink),var(--cyan));transition:width .3s}
 .analysis-status{font-size:10px!important;letter-spacing:.18em;color:var(--cyan)!important}
-@media(max-width:600px){.evidence-grid{grid-template-columns:1fr}.evidence-card img{height:auto;max-height:440px;object-fit:contain}}
-
 .route-shell{border:1px solid rgba(92,246,255,.35);background:rgba(5,10,18,.88);padding:12px;margin:26px 0;position:relative;overflow:hidden}
 .route-top{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;margin:0 0 12px;color:var(--cyan);font-size:10px;letter-spacing:.15em;text-transform:uppercase}
 .route-state{color:var(--pink)}
-.route-map{position:relative;width:100%;overflow:hidden;line-height:0;border:1px solid rgba(92,246,255,.2);background:#03070c;isolation:isolate}
-.map-zoom-layer{position:relative;width:100%;transform:scale(1);transform-origin:57.5% 31.3%;transition:transform 1.7s cubic-bezier(.2,.8,.2,1),transform-origin 1.7s cubic-bezier(.2,.8,.2,1)}
-.map-zoom-layer>img{display:block;width:100%;height:auto;opacity:.84}
-.route-map.zoom0 .map-zoom-layer{transform:scale(2.7);transform-origin:57.5% 31.3%}
-.route-map.zoom1 .map-zoom-layer{transform:scale(2.7);transform-origin:81.5% 65.5%}
-.route-map.zoom2 .map-zoom-layer{transform:scale(2.7);transform-origin:22.5% 17.5%}
-.route-svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
-.route-path{fill:none;stroke:#5cf6ff;stroke-width:7;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 5px #5cf6ff) drop-shadow(0 0 12px #ff3f9d);stroke-dasharray:2600;stroke-dashoffset:2600;transition:stroke-dashoffset 2.1s ease}
-.route-map.stage1 .route-path.first{stroke-dashoffset:0}
-.route-map.stage1 .route-path.second{stroke-dashoffset:2600}
-.route-map.stage2 .route-path{stroke-dashoffset:0}
-.route-pin{position:absolute;z-index:2;transform:translate(-50%,-50%);border:2px solid var(--cyan);border-radius:50%;width:42px;height:42px;display:flex;align-items:center;justify-content:center;background:#07121eeF;color:var(--cyan);font-size:17px;font-weight:900;box-shadow:0 0 0 5px #5cf6ff25,0 0 20px #5cf6ff88;cursor:pointer;line-height:1;transition:opacity .3s,transform .3s,background .3s}
+.route-map{position:relative;width:100%;overflow:hidden;line-height:0;border:1px solid rgba(92,246,255,.2);background:#03070c;isolation:isolate;touch-action:pan-y}
+.map-zoom-layer{position:relative;width:100%;transform:translate(0,0) scale(1);transform-origin:0 0;transition:transform 1.45s cubic-bezier(.2,.8,.2,1);will-change:transform}
+.map-zoom-layer>img{display:block;width:100%;height:auto;opacity:1}
+.route-pin{position:absolute;z-index:2;transform:translate(-50%,-50%);border:2px solid var(--cyan);border-radius:50%;width:42px;height:42px;display:flex;align-items:center;justify-content:center;background:#07121eef;color:var(--cyan);font-size:17px;font-weight:900;box-shadow:0 0 0 5px #5cf6ff25,0 0 20px #5cf6ff88;cursor:pointer;line-height:1;transition:opacity .3s,transform .3s,background .3s}
 .route-pin:hover,.route-pin:focus-visible{transform:translate(-50%,-50%) scale(1.12);outline:2px solid white;outline-offset:3px}
 .route-pin.pinkpin{border-color:var(--pink);color:var(--pink);box-shadow:0 0 0 5px #ff3f9d25,0 0 20px #ff3f9d99}
 .route-pin.locked{opacity:0;pointer-events:none;transform:translate(-50%,-50%) scale(.4)}
-.route-pin.startpin{left:57.5%;top:31.3%}.route-pin.tompin{left:81.5%;top:65.5%}.route-pin.finishpin{left:22.5%;top:17.5%}
-.route-legend{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:12px}
-.route-stop{border:1px solid rgba(138,160,183,.23);padding:10px;background:rgba(255,255,255,.025);font-size:10px;color:#8ca3b8;line-height:1.45}
-.route-stop strong{display:block;color:#dffaff;font-size:11px;margin-bottom:3px}
-.route-stop.unlocked{border-color:rgba(92,246,255,.6);color:#a9c4d7}.route-stop.unlocked strong{color:var(--cyan)}
+.route-pin.startpin{left:57.5%;top:28%}.route-pin.tompin{left:81.5%;top:73%}.route-pin.finishpin{left:22%;top:11%}
 .route-help{font-size:12px;line-height:1.6;color:#a8b8c8;margin:12px 0 0}
-@media(max-width:600px){.route-shell{padding:7px}.route-pin{width:34px;height:34px;font-size:14px}.route-legend{grid-template-columns:1fr}.route-stop{padding:8px}}
-
+@media(max-width:600px){.route-shell{padding:7px}.route-pin{width:34px;height:34px;font-size:14px}}
+.desktop-window{margin:24px 0;border:1px solid rgba(92,246,255,.38);background:linear-gradient(145deg,#0a1522,#03070d);box-shadow:0 0 26px #5cf6ff10}
+.desktop-bar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;border-bottom:1px solid var(--line);font-size:10px;letter-spacing:.15em;color:var(--cyan)}
+.desktop-dots{display:flex;gap:5px}.desktop-dots i{width:8px;height:8px;border-radius:50%;background:var(--pink);display:block}.desktop-dots i:nth-child(2){background:#ffcb5c}.desktop-dots i:nth-child(3){background:var(--cyan)}
+.desktop-body{padding:22px}
+.desktop-icon{width:116px;min-height:116px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:14px 10px;background:transparent;border:1px solid transparent;color:var(--white);text-align:center;font-size:10px;letter-spacing:.08em}
+.desktop-icon:hover,.desktop-icon:focus-visible{border-color:var(--cyan);background:#5cf6ff0c;outline:none}
+.folder-icon{width:48px;height:36px;position:relative;border:2px solid var(--cyan);border-radius:4px;filter:drop-shadow(0 0 7px #5cf6ff70)}
+.folder-icon:before{content:"";position:absolute;left:2px;top:-9px;width:21px;height:8px;border:2px solid var(--cyan);border-bottom:0;border-radius:4px 4px 0 0}
+.file-window{border:1px solid rgba(92,246,255,.48);background:#050b13;margin-top:16px}
+.file-window-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px;border-bottom:1px solid var(--line);color:var(--cyan);font-size:10px;letter-spacing:.12em}
+.close-window{background:transparent;border:1px solid #526a7f;color:#a9b9c9;padding:6px 10px}
+.file-window-body{padding:16px}
+.file-meta{font-size:10px;color:#8198ae;letter-spacing:.12em;line-height:1.8;margin-bottom:12px}
+.evidence-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:18px 0}
+.evidence-card{display:block;width:100%;padding:10px;text-align:left;color:var(--white);background:rgba(8,16,27,.9);border:1px solid rgba(138,160,183,.3);transition:border-color .2s,box-shadow .2s,transform .2s}
+.evidence-card img{display:block;width:100%;height:220px;object-fit:cover;background:#020408}
+.evidence-card .caption{display:flex;padding:12px 2px 2px;font-size:9px}
+.evidence-card.selected{border-color:var(--cyan);box-shadow:0 0 0 2px #5cf6ff35,0 0 22px #5cf6ff20;transform:translateY(-2px)}
+.evidence-card.selected .select-state{color:var(--cyan)}
+@media(max-width:600px){.evidence-grid{grid-template-columns:1fr}.evidence-card img{height:auto;max-height:440px;object-fit:contain}.desktop-body{padding:12px}}
 @media(max-width:600px){.topbar{font-size:9px}.hero{min-height:75vh;padding:50px 0}.hero p{font-size:14px}.specgrid{grid-template-columns:1fr}.card{padding:9px}.caption{font-size:8px}.btn{width:100%;padding:15px 10px}.hero-meta{gap:12px}}
-@media (prefers-reduced-motion:reduce){.map-zoom-layer,.route-path,section{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
+@media (prefers-reduced-motion:reduce){.map-zoom-layer,.route-pin,section{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
 </style>
 </head>
 <body>
@@ -107,7 +107,6 @@ h2{font-size:clamp(28px,5vw,52px);line-height:1.02;text-transform:uppercase;marg
     <div>NC // FIXER NETWORK</div>
     <div class="status"><span class="dot"></span> ENCRYPTED CONNECTION</div>
   </header>
-
   <main>
     <div class="hero" id="intro">
       <div class="eyebrow">Incoming job // Classified</div>
@@ -116,18 +115,16 @@ h2{font-size:clamp(28px,5vw,52px);line-height:1.02;text-transform:uppercase;marg
       <button class="btn" onclick="startMission()">[ ПРИНЯТЬ ЗАКАЗ ]</button>
       <div class="hero-meta"><span>CONTRACT № 320-G20</span><span>THREAT LEVEL: UNKNOWN</span><span>REWARD: CLASSIFIED</span></div>
     </div>
-
     <div class="progress"><span id="progressbar"></span></div>
-
     <section id="routeMap">
       <div class="stephead"><span class="stepnum">ROUTE</span> NAVIGATION // MOSCOW REGION</div>
       <h2 id="mapHeading">Маршрут загружен не полностью</h2>
       <p class="lead" id="mapLead">Система получила первую координату. Карта приблизится к активной координате. Нажми на метку, чтобы открыть задание.</p>
       <div class="route-shell">
         <div class="route-top"><span>GPS // CONTRACT 320-G20</span><span class="route-state" id="routeState">1 / 3 COORDINATES FOUND</span></div>
-        <div class="route-map stage0" id="routeMapCanvas">
+        <div class="route-map" id="routeMapCanvas">
           <div class="map-zoom-layer" id="mapZoomLayer">
-            <img src="route-map.jpg" alt="Киберпанк-карта маршрута по Москве и Московской области: старт, Томилино, финиш в Химках">
+            <img src="route-map.jpg" alt="Киберпанк-карта Москвы и Московской области с точками старта, Томилино и финиша">
             <button type="button" class="route-pin startpin" id="pinStart" aria-label="Открыть точку старта" title="Старт: Нововладыкинский проезд">⚑</button>
             <button type="button" class="route-pin pinkpin tompin locked" id="pinTomilino" aria-label="Открыть точку Томилино" title="Томилино">Ⅱ</button>
             <button type="button" class="route-pin pinkpin finishpin locked" id="pinFinish" aria-label="Открыть финиш в Химках" title="Финиш: Химки">⌂</button>
@@ -136,13 +133,12 @@ h2{font-size:clamp(28px,5vw,52px);line-height:1.02;text-transform:uppercase;marg
         <p class="route-help" id="mapHelp">Координата 01 доступна. Остальные точки откроются по мере прохождения контракта.</p>
       </div>
     </section>
-
     <section id="step1">
       <div class="stephead"><span class="stepnum">01</span> TARGET FILE // ДОСЬЕ ЦЕЛИ</div>
       <h2>Объект обнаружен</h2>
       <p class="lead">Клиент передал ориентир. Сверь данные и подтверди, что найден именно нужный автомобиль.</p>
       <div class="card">
-        <img src="target-ad.jpg" alt="Объявление с фотографией синей BMW" />
+        <img src="target-ad.jpg" alt="Объявление с фотографией синей BMW">
         <div class="caption"><span>Visual reference // Target 001</span><span>Status: for sale → secured</span></div>
       </div>
       <div class="specgrid">
@@ -154,7 +150,6 @@ h2{font-size:clamp(28px,5vw,52px);line-height:1.02;text-transform:uppercase;marg
       <p class="smallnote">CLIENT NOTE: «Ты узнаешь её, когда увидишь».</p>
       <button class="btn" onclick="goStep('fine')">[ ЦЕЛЬ ПОДТВЕРЖДЕНА → ]</button>
     </section>
-
     <section id="fine">
       <div class="stephead"><span class="stepnum">ALERT</span> TRAFFIC CAMERA // DETECTED</div>
       <h2>Система обнаружила нарушение</h2>
@@ -163,30 +158,42 @@ h2{font-size:clamp(28px,5vw,52px);line-height:1.02;text-transform:uppercase;marg
         <img src="fine-evidence.jpg" alt="Фотография автомобиля и уведомление камеры фиксации скорости 173 км/ч">
         <div class="caption"><span>Evidence // Speed camera</span><span>STATUS: VERY LOUD</span></div>
       </div>
-      <div class="chat">
-        <div class="chathead">INCOMING MESSAGE // G</div>
-        <p class="highlight">«Гена, что за хуйня? Просил же без шума!!!»</p>
-      </div>
+      <div class="chat"><div class="chathead">INCOMING MESSAGE // G</div><p class="highlight">«Гена, что за хуйня? Просил же без шума!!!»</p></div>
       <p class="lead">Контракт всё ещё активен. Следующая координата — Томилино.</p>
       <button class="btn pink" onclick="showMap(1)">[ ЛАДНО, ЕДЕМ В ТОМИЛИНО → ]</button>
     </section>
-
     <section id="step2">
       <div class="stephead"><span class="stepnum">02</span> OPERATION LOG // ТОМИЛИНО</div>
       <h2>След потерян</h2>
       <p class="lead">Операция прошла успешно. Объект вне исходной точки. Отправь заказчику подтверждение выполнения.</p>
-      <p class="lead">Выбери одно или оба фото из архива на сайте. Ничего загружать с телефона не нужно.</p>
-      <div class="evidence-grid">
-        <button type="button" class="evidence-card" id="evidenceFront" aria-pressed="false" onclick="toggleEvidence('front')">
-          <img src="tomilino-front.jpg" alt="Синяя BMW ночью, вид спереди">
-          <span class="caption"><span>Evidence A // Front view</span><span class="select-state">[ SELECT ]</span></span>
-        </button>
-        <button type="button" class="evidence-card" id="evidenceRear" aria-pressed="false" onclick="toggleEvidence('rear')">
-          <img src="tomilino-rear.jpg" alt="Синяя BMW ночью, вид сзади">
-          <span class="caption"><span>Evidence B // Rear view</span><span class="select-state">[ SELECT ]</span></span>
-        </button>
+      <p class="lead">На рабочем столе обнаружена папка с уликами. Открой её и выбери обе фотографии из архива.</p>
+      <div class="desktop-window">
+        <div class="desktop-bar"><span>REMOTE DESKTOP // TOMILINO NODE</span><span class="desktop-dots"><i></i><i></i><i></i></span></div>
+        <div class="desktop-body">
+          <button type="button" class="desktop-icon" id="openFilesButton" aria-expanded="false" aria-controls="fileWindow">
+            <span class="folder-icon" aria-hidden="true"></span>
+            <span>TOMILINO_FILES</span>
+          </button>
+          <div class="file-window hidden" id="fileWindow">
+            <div class="file-window-head"><span>▣ /CLASSIFIED/TOMILINO_FILES</span><button class="close-window" type="button" id="closeFilesButton" aria-label="Закрыть окно">×</button></div>
+            <div class="file-window-body">
+              <div class="file-meta">FILES FOUND: 02<br>SELECT BOTH EVIDENCE FILES TO CONTINUE</div>
+              <div class="evidence-grid">
+                <button type="button" class="evidence-card" id="evidenceFront" aria-pressed="false" data-evidence="front">
+                  <img src="tomilino-front.jpg" alt="Синяя BMW ночью, вид спереди">
+                  <span class="caption"><span>IMG_001 // FRONT</span><span class="select-state">[ SELECT ]</span></span>
+                </button>
+                <button type="button" class="evidence-card" id="evidenceRear" aria-pressed="false" data-evidence="rear">
+                  <img src="tomilino-rear.jpg" alt="Синяя BMW ночью, вид сзади">
+                  <span class="caption"><span>IMG_002 // REAR</span><span class="select-state">[ SELECT ]</span></span>
+                </button>
+              </div>
+              <div class="file-meta" id="selectedCount" aria-live="polite">SELECTED: 0/2</div>
+              <button class="btn pink" id="sendEvidenceButton" type="button" disabled>[ SELECT 2 FILES ]</button>
+            </div>
+          </div>
+        </div>
       </div>
-      <button class="btn pink" id="sendEvidenceButton" onclick="sendEvidence()">[ ПОДТВЕРДИТЬ ВЫБОР ]</button>
       <div id="analysisPanel" class="chat hidden">
         <div class="chathead">SYSTEM // ANALYZING FILES</div>
         <p id="analysisLine">Инициализация анализа…</p>
@@ -199,32 +206,26 @@ h2{font-size:clamp(28px,5vw,52px);line-height:1.02;text-transform:uppercase;marg
         <br><button class="btn" onclick="showMap(2)">[ ПРОЧИТАТЬ ОТВЕТ → ]</button>
       </div>
     </section>
-
     <section id="step3">
       <div class="stephead"><span class="stepnum">03</span> INCOMING MESSAGE // UNKNOWN CLIENT</div>
       <h2>Условия сделки изменены</h2>
       <p class="lead">Получено зашифрованное сообщение. Отправитель подтвердил выполнение контракта.</p>
       <div class="chat">
         <div class="chathead">UNKNOWN CLIENT // 00:47 AM</div>
-        <p>Фото получил. Работа выполнена безупречно.</p>
+        <p>Фото получил. Работа выполнена безупречно.</p><br>
         <p>Но есть одна деталь, которую тебе забыли сообщить.</p>
         <span class="highlight">ЭТА МАШИНА — ТВОЁ ВОЗНАГРАЖДЕНИЕ.</span>
         <p>Контракт закрыт. Ключи — у тебя. Теперь это твоя история.</p>
       </div>
       <button class="btn pink" onclick="revealReward()">[ ЗАБРАТЬ ВОЗНАГРАЖДЕНИЕ → ]</button>
     </section>
-
     <section id="step4">
       <div class="stephead"><span class="stepnum">04</span> CONTRACT COMPLETED</div>
       <h2>Reward unlocked</h2>
       <p class="lead">Объект больше не цель. Теперь он принадлежит легенде.</p>
       <div class="card reward" id="rewardCard">
-        <img src="reward.jpg" alt="Синяя BMW G20 в драматичной подсветке" />
-        <div class="reward-overlay">
-          <div class="reward-title">REWARD UNLOCKED</div>
-          <div class="reward-name">BMW 320d<br>G20</div>
-          <div class="reward-copy">GENNADIY VERBITSKII // OWNER</div>
-        </div>
+        <img src="reward.jpg" alt="Синяя BMW G20 в драматичной подсветке">
+        <div class="reward-overlay"><div class="reward-title">REWARD UNLOCKED</div><div class="reward-name">BMW 320d<br>G20</div><div class="reward-copy">GENNADIY VERBITSKII // OWNER</div></div>
       </div>
       <div class="finalnote">
         <h2>С днём рождения, Ген! ❤️</h2>
@@ -236,10 +237,11 @@ h2{font-size:clamp(28px,5vw,52px);line-height:1.02;text-transform:uppercase;marg
   <footer class="footer"><span>PAROVOZIK // PRIVATE CONTRACT</span><span>MADE FOR GENNADIY VERBITSKII ♥</span></footer>
 </div>
 <script>
-let currentStep=0;
 let mapStage=0;
 const selectedEvidence=new Set();
 let analysisRunning=false;
+let zoomTimer=null;
+
 function startMission(){
  document.getElementById('intro').classList.add('hidden');
  document.querySelector('.progress').style.display='block';
@@ -248,21 +250,13 @@ function startMission(){
 function showMap(stage){
  mapStage=stage;
  document.querySelectorAll('main section').forEach(s=>s.classList.remove('active'));
- const map=document.getElementById('routeMap');
- map.classList.add('active');
- const canvas=document.getElementById('routeMapCanvas');
- // Reset to the full map while it is visible, then animate toward the new coordinate.
- canvas.classList.remove('zoom0','zoom1','zoom2','stage0','stage1','stage2');
- canvas.classList.add('stage'+stage);
+ document.getElementById('routeMap').classList.add('active');
  document.getElementById('pinTomilino').classList.toggle('locked',stage<1);
  document.getElementById('pinFinish').classList.toggle('locked',stage<2);
- document.getElementById('stopStart').classList.add('unlocked');
- document.getElementById('stopTomilino').classList.toggle('unlocked',stage>=1);
- document.getElementById('stopFinish').classList.toggle('unlocked',stage>=2);
  const headings=[
   ['Маршрут загружен не полностью','Система получила первую координату. Карта приблизится к активной координате. Нажми на метку, чтобы открыть задание.','1 / 3 COORDINATES FOUND','Координата 01 доступна. Остальные точки откроются по мере прохождения контракта.'],
-  ['Следующая координата: Томилино','Цель подтверждена. Система прокладывает маршрут к точке, где объект был обнаружен после операции. Нажми на розовую метку Томилино.','2 / 3 COORDINATES FOUND','Карта приблизилась к Томилино. Открой точку 02, чтобы передать фотодоказательства.'],
-  ['Финальная точка разблокирована','Доказательства приняты. Маршрут продолжается к финальной координате. Нажми на метку в Химках, чтобы завершить контракт.','3 / 3 COORDINATES FOUND','Карта приблизилась к Химкам. Нажми на точку 03, чтобы прочитать последнее сообщение заказчика.']
+  ['Следующая координата: Томилино','Цель подтверждена. Система открывает доступ к следующей точке. Нажми на розовую метку Томилино.','2 / 3 COORDINATES FOUND','Точка 02 разблокирована. Нажми на неё, чтобы передать фотодоказательства.'],
+  ['Финальная точка разблокирована','Доказательства приняты. Финальная координата доступна. Нажми на метку в Химках, чтобы завершить контракт.','3 / 3 COORDINATES FOUND','Точка 03 разблокирована. Нажми на неё, чтобы прочитать последнее сообщение заказчика.']
  ];
  document.getElementById('mapHeading').textContent=headings[stage][0];
  document.getElementById('mapLead').textContent=headings[stage][1];
@@ -270,12 +264,27 @@ function showMap(stage){
  document.getElementById('mapHelp').textContent=headings[stage][3];
  document.getElementById('progressbar').style.width=({0:10,1:40,2:70}[stage])+'%';
  window.scrollTo({top:0,behavior:'smooth'});
- // Force a visible full-map frame before applying the zoom class.
- void canvas.offsetWidth;
- setTimeout(()=>canvas.classList.add('zoom'+stage),80);
+ const canvas=document.getElementById('routeMapCanvas');
+ if(zoomTimer)clearTimeout(zoomTimer);
+ const layer=document.getElementById('mapZoomLayer');
+ layer.style.transform='translate(0px,0px) scale(1)';
+ zoomTimer=setTimeout(()=>zoomToPoint(stage),90);
+}
+function zoomToPoint(stage){
+ const canvas=document.getElementById('routeMapCanvas');
+ const layer=document.getElementById('mapZoomLayer');
+ const pin=document.getElementById(['pinStart','pinTomilino','pinFinish'][stage]);
+ if(!canvas||!layer||!pin)return;
+ const scale=2.35;
+ const canvasRect=canvas.getBoundingClientRect();
+ const pinRect=pin.getBoundingClientRect();
+ const px=(pinRect.left+pinRect.width/2-canvasRect.left);
+ const py=(pinRect.top+pinRect.height/2-canvasRect.top);
+ const x=canvas.clientWidth/2-px*scale;
+ const y=canvas.clientHeight/2-py*scale;
+ layer.style.transform=`translate(${x}px,${y}px) scale(${scale})`;
 }
 function goStep(n){
- currentStep=n;
  document.querySelectorAll('main section').forEach(s=>s.classList.remove('active'));
  const el=document.getElementById(typeof n==='string'?n:'step'+n);
  if(!el)return;
@@ -286,23 +295,36 @@ function goStep(n){
 document.getElementById('pinStart').addEventListener('click',()=>goStep(1));
 document.getElementById('pinTomilino').addEventListener('click',()=>{if(mapStage>=1)goStep(2)});
 document.getElementById('pinFinish').addEventListener('click',()=>{if(mapStage>=2)goStep(3)});
-function toggleEvidence(which){
+
+document.getElementById('openFilesButton').addEventListener('click',()=>{
+ const win=document.getElementById('fileWindow');
+ win.classList.remove('hidden');
+ document.getElementById('openFilesButton').setAttribute('aria-expanded','true');
+});
+document.getElementById('closeFilesButton').addEventListener('click',()=>{
+ document.getElementById('fileWindow').classList.add('hidden');
+ document.getElementById('openFilesButton').setAttribute('aria-expanded','false');
+});
+document.querySelectorAll('[data-evidence]').forEach(el=>el.addEventListener('click',()=>{
  if(analysisRunning)return;
- const id=which==='front'?'evidenceFront':'evidenceRear';
- const el=document.getElementById(id);
+ const which=el.dataset.evidence;
  if(selectedEvidence.has(which)){selectedEvidence.delete(which);el.classList.remove('selected');el.setAttribute('aria-pressed','false');}
  else{selectedEvidence.add(which);el.classList.add('selected');el.setAttribute('aria-pressed','true');}
  el.querySelector('.select-state').textContent=selectedEvidence.has(which)?'[ SELECTED ✓ ]':'[ SELECT ]';
-}
+ document.getElementById('selectedCount').textContent=`SELECTED: ${selectedEvidence.size}/2`;
+ const send=document.getElementById('sendEvidenceButton');
+ send.disabled=selectedEvidence.size!==2;
+ send.textContent=selectedEvidence.size===2?'[ ANALYZE SELECTED FILES ]':'[ SELECT 2 FILES ]';
+}));
+document.getElementById('sendEvidenceButton').addEventListener('click',sendEvidence);
 function sendEvidence(){
- if(analysisRunning)return;
- if(selectedEvidence.size===0){document.getElementById('sendEvidenceButton').textContent='[ СНАЧАЛА ВЫБЕРИ ФОТО ]';setTimeout(()=>{if(!analysisRunning)document.getElementById('sendEvidenceButton').textContent='[ ПОДТВЕРДИТЬ ВЫБОР ]';},1700);return;}
+ if(analysisRunning||selectedEvidence.size!==2)return;
  analysisRunning=true;
  const panel=document.getElementById('analysisPanel');panel.classList.remove('hidden');
  const button=document.getElementById('sendEvidenceButton');button.disabled=true;button.textContent='[ ANALYZING… ]';
  const lines=[
   ['Инициализация анализа…','INITIALIZING',12],
-  ['Проверка метаданных файла…','VERIFYING FILES',35],
+  ['Проверка метаданных файлов…','VERIFYING FILES',35],
   ['Сопоставление координат…','CHECKING LOCATION',61],
   ['Сверка объекта с контрактом…','MATCHING TARGET',84],
   ['Доказательства подтверждены.','EVIDENCE ACCEPTED',100]
@@ -313,34 +335,37 @@ function sendEvidence(){
   document.getElementById('analysisStatus').textContent=item[1];
   document.getElementById('analysisBar').style.width=item[2]+'%';i++;
   if(i<lines.length)setTimeout(tick,850);
-  else setTimeout(()=>{document.getElementById('evidenceSent').classList.remove('hidden');document.getElementById('sendEvidenceButton').classList.add('hidden');},650);
+  else setTimeout(()=>{document.getElementById('evidenceSent').classList.remove('hidden');button.classList.add('hidden');},650);
  }
  tick();
 }
-function revealReward(){
- goStep(4);
- setTimeout(()=>document.getElementById('rewardCard').classList.add('revealed'),250);
-}
+function revealReward(){goStep(4);setTimeout(()=>document.getElementById('rewardCard').classList.add('revealed'),250)}
 function replay(){
  document.querySelectorAll('main section').forEach(s=>s.classList.remove('active'));
  document.getElementById('intro').classList.remove('hidden');
  document.getElementById('evidenceSent').classList.add('hidden');
  document.getElementById('analysisPanel').classList.add('hidden');
  document.getElementById('sendEvidenceButton').classList.remove('hidden');
- document.getElementById('sendEvidenceButton').disabled=false;
- document.getElementById('sendEvidenceButton').textContent='[ ПОДТВЕРДИТЬ ВЫБОР ]';
+ document.getElementById('sendEvidenceButton').disabled=true;
+ document.getElementById('sendEvidenceButton').textContent='[ SELECT 2 FILES ]';
  document.getElementById('analysisBar').style.width='0';
  document.getElementById('analysisLine').textContent='Инициализация анализа…';
  document.getElementById('analysisStatus').textContent='WAITING FOR INPUT';
+ document.getElementById('fileWindow').classList.add('hidden');
+ document.getElementById('openFilesButton').setAttribute('aria-expanded','false');
  selectedEvidence.clear();analysisRunning=false;
- ['evidenceFront','evidenceRear'].forEach(id=>{const el=document.getElementById(id);el.classList.remove('selected');el.setAttribute('aria-pressed','false');el.querySelector('.select-state').textContent='[ SELECT ]';});
+ document.querySelectorAll('[data-evidence]').forEach(el=>{el.classList.remove('selected');el.setAttribute('aria-pressed','false');el.querySelector('.select-state').textContent='[ SELECT ]';});
+ document.getElementById('selectedCount').textContent='SELECTED: 0/2';
  document.getElementById('rewardCard').classList.remove('revealed');
  document.querySelector('.progress').style.display='none';
  document.getElementById('progressbar').style.width='0';
  mapStage=0;
+ document.getElementById('mapZoomLayer').style.transform='translate(0px,0px) scale(1)';
+ if(zoomTimer)clearTimeout(zoomTimer);
  window.scrollTo({top:0,behavior:'smooth'});
 }
 document.querySelector('.progress').style.display='none';
+window.addEventListener('resize',()=>{if(document.getElementById('routeMap').classList.contains('active'))zoomToPoint(mapStage)});
 </script>
 </body>
 </html>
