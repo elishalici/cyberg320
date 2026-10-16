@@ -280,8 +280,14 @@ function zoomToPoint(stage){
  const scale=2.05;
  const px=canvas.clientWidth*point.x/100;
  const py=canvas.clientHeight*point.y/100;
- const x=canvas.clientWidth/2-px*scale;
- const y=canvas.clientHeight/2-py*scale;
+ // Clamp translation so the zoomed map always covers the viewport.
+ // Without clamping, points near the top/left create large empty bands.
+ const scaledW=canvas.clientWidth*scale;
+ const scaledH=canvas.clientHeight*scale;
+ const desiredX=canvas.clientWidth/2-px*scale;
+ const desiredY=canvas.clientHeight/2-py*scale;
+ const x=Math.min(0,Math.max(canvas.clientWidth-scaledW,desiredX));
+ const y=Math.min(0,Math.max(canvas.clientHeight-scaledH,desiredY));
  layer.style.transform=`translate(${x}px,${y}px) scale(${scale})`;
 }
 function goStep(n){
