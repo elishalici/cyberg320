@@ -59,6 +59,17 @@ h2{font-size:clamp(28px,5vw,52px);line-height:1.02;text-transform:uppercase;marg
 .hidden{display:none!important}
 .progress{height:2px;background:#172332;margin:0 0 35px}.progress span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--pink),var(--cyan));transition:width .4s}
 .smallnote{font-size:10px;color:#637d93;letter-spacing:.12em;margin-top:20px}
+.highlight-inline{color:var(--pink)}
+.evidence-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:24px 0}
+.evidence-card{display:block;width:100%;padding:10px;text-align:left;color:var(--white);background:rgba(8,16,27,.9);border:1px solid rgba(138,160,183,.3);transition:border-color .2s,box-shadow .2s,transform .2s}
+.evidence-card img{display:block;width:100%;height:260px;object-fit:cover;background:#020408}
+.evidence-card .caption{display:flex;padding:12px 2px 2px;font-size:9px}
+.evidence-card.selected{border-color:var(--cyan);box-shadow:0 0 0 2px #5cf6ff35,0 0 22px #5cf6ff20;transform:translateY(-2px)}
+.evidence-card.selected .select-state{color:var(--cyan)}
+.analysis-track{height:4px;background:#1a2836;margin:18px 0 10px;overflow:hidden}
+.analysis-track span{display:block;width:0;height:100%;background:linear-gradient(90deg,var(--pink),var(--cyan));transition:width .3s}
+.analysis-status{font-size:10px!important;letter-spacing:.18em;color:var(--cyan)!important}
+@media(max-width:600px){.evidence-grid{grid-template-columns:1fr}.evidence-card img{height:auto;max-height:440px;object-fit:contain}}
 
 .route-shell{border:1px solid rgba(92,246,255,.35);background:rgba(5,10,18,.88);padding:12px;margin:26px 0;position:relative;overflow:hidden}
 .route-top{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;margin:0 0 12px;color:var(--cyan);font-size:10px;letter-spacing:.15em;text-transform:uppercase}
@@ -122,11 +133,6 @@ h2{font-size:clamp(28px,5vw,52px);line-height:1.02;text-transform:uppercase;marg
             <button type="button" class="route-pin pinkpin finishpin locked" id="pinFinish" aria-label="Открыть финиш в Химках" title="Финиш: Химки">⌂</button>
           </div>
         </div>
-        <div class="route-legend">
-          <div class="route-stop unlocked" id="stopStart"><strong>01 · СТАРТ</strong>Нововладыкинский проезд, 1к3</div>
-          <div class="route-stop" id="stopTomilino"><strong>02 · ОСТАНОВКА</strong>Томилино, Птицефабрика, 24</div>
-          <div class="route-stop" id="stopFinish"><strong>03 · ФИНИШ</strong>Химки, ул. 9 Мая, 21к2</div>
-        </div>
         <p class="route-help" id="mapHelp">Координата 01 доступна. Остальные точки откроются по мере прохождения контракта.</p>
       </div>
     </section>
@@ -146,25 +152,50 @@ h2{font-size:clamp(28px,5vw,52px);line-height:1.02;text-transform:uppercase;marg
         <div class="spec"><small>Двигатель</small><strong>2.0 Diesel · 190 HP</strong></div>
       </div>
       <p class="smallnote">CLIENT NOTE: «Ты узнаешь её, когда увидишь».</p>
-      <button class="btn" onclick="showMap(1)">[ ЦЕЛЬ ПОДТВЕРЖДЕНА → ]</button>
+      <button class="btn" onclick="goStep('fine')">[ ЦЕЛЬ ПОДТВЕРЖДЕНА → ]</button>
+    </section>
+
+    <section id="fine">
+      <div class="stephead"><span class="stepnum">ALERT</span> TRAFFIC CAMERA // DETECTED</div>
+      <h2>Система обнаружила нарушение</h2>
+      <p class="lead">Новый файл прикреплён к контракту. Скорость зафиксирована: <strong class="highlight-inline">173 км/ч</strong>. Координаты: МКАД, 84-й километр.</p>
+      <div class="card">
+        <img src="fine-evidence.jpg" alt="Фотография автомобиля и уведомление камеры фиксации скорости 173 км/ч">
+        <div class="caption"><span>Evidence // Speed camera</span><span>STATUS: VERY LOUD</span></div>
+      </div>
+      <div class="chat">
+        <div class="chathead">INCOMING MESSAGE // G</div>
+        <p class="highlight">«Гена, что за хуйня? Просил же без шума!!!»</p>
+      </div>
+      <p class="lead">Контракт всё ещё активен. Следующая координата — Томилино.</p>
+      <button class="btn pink" onclick="showMap(1)">[ ЛАДНО, ЕДЕМ В ТОМИЛИНО → ]</button>
     </section>
 
     <section id="step2">
       <div class="stephead"><span class="stepnum">02</span> OPERATION LOG // ТОМИЛИНО</div>
       <h2>След потерян</h2>
       <p class="lead">Операция прошла успешно. Объект вне исходной точки. Отправь заказчику подтверждение выполнения.</p>
-      <div class="card">
-        <img src="tomilino-front.jpg" alt="Синяя BMW ночью, вид спереди" />
-        <div class="caption"><span>Evidence A // Front view</span><span>Location: Tomilino</span></div>
+      <p class="lead">Выбери одно или оба фото из архива на сайте. Ничего загружать с телефона не нужно.</p>
+      <div class="evidence-grid">
+        <button type="button" class="evidence-card" id="evidenceFront" aria-pressed="false" onclick="toggleEvidence('front')">
+          <img src="tomilino-front.jpg" alt="Синяя BMW ночью, вид спереди">
+          <span class="caption"><span>Evidence A // Front view</span><span class="select-state">[ SELECT ]</span></span>
+        </button>
+        <button type="button" class="evidence-card" id="evidenceRear" aria-pressed="false" onclick="toggleEvidence('rear')">
+          <img src="tomilino-rear.jpg" alt="Синяя BMW ночью, вид сзади">
+          <span class="caption"><span>Evidence B // Rear view</span><span class="select-state">[ SELECT ]</span></span>
+        </button>
       </div>
-      <div class="card">
-        <img src="tomilino-rear.jpg" alt="Синяя BMW ночью, вид сзади" />
-        <div class="caption"><span>Evidence B // Rear view</span><span>Transmission: encrypted</span></div>
+      <button class="btn pink" id="sendEvidenceButton" onclick="sendEvidence()">[ ПОДТВЕРДИТЬ ВЫБОР ]</button>
+      <div id="analysisPanel" class="chat hidden">
+        <div class="chathead">SYSTEM // ANALYZING FILES</div>
+        <p id="analysisLine">Инициализация анализа…</p>
+        <div class="analysis-track"><span id="analysisBar"></span></div>
+        <p id="analysisStatus" class="analysis-status">WAITING FOR INPUT</p>
       </div>
-      <button class="btn pink" onclick="sendEvidence()">[ ОТПРАВИТЬ ФОТО ЗАКАЗЧИКУ ]</button>
       <div id="evidenceSent" class="chat hidden">
-        <div class="chathead">SYSTEM // MESSAGE SENT</div>
-        <p>Доказательства отправлены. Ожидание ответа клиента<span class="blink"> ▍</span></p>
+        <div class="chathead">SYSTEM // EVIDENCE ACCEPTED</div>
+        <p>Доказательства приняты. Клиент отправил ответ.</p>
         <br><button class="btn" onclick="showMap(2)">[ ПРОЧИТАТЬ ОТВЕТ → ]</button>
       </div>
     </section>
@@ -207,6 +238,8 @@ h2{font-size:clamp(28px,5vw,52px);line-height:1.02;text-transform:uppercase;marg
 <script>
 let currentStep=0;
 let mapStage=0;
+const selectedEvidence=new Set();
+let analysisRunning=false;
 function startMission(){
  document.getElementById('intro').classList.add('hidden');
  document.querySelector('.progress').style.display='block';
@@ -244,18 +277,45 @@ function showMap(stage){
 function goStep(n){
  currentStep=n;
  document.querySelectorAll('main section').forEach(s=>s.classList.remove('active'));
- const el=document.getElementById('step'+n);
+ const el=document.getElementById(typeof n==='string'?n:'step'+n);
+ if(!el)return;
  el.classList.add('active');
- document.getElementById('progressbar').style.width=({1:25,2:50,3:75,4:100}[n]||0)+'%';
+ document.getElementById('progressbar').style.width=({'fine':32,1:25,2:55,3:78,4:100}[n]||0)+'%';
  window.scrollTo({top:0,behavior:'smooth'});
 }
 document.getElementById('pinStart').addEventListener('click',()=>goStep(1));
 document.getElementById('pinTomilino').addEventListener('click',()=>{if(mapStage>=1)goStep(2)});
 document.getElementById('pinFinish').addEventListener('click',()=>{if(mapStage>=2)goStep(3)});
+function toggleEvidence(which){
+ if(analysisRunning)return;
+ const id=which==='front'?'evidenceFront':'evidenceRear';
+ const el=document.getElementById(id);
+ if(selectedEvidence.has(which)){selectedEvidence.delete(which);el.classList.remove('selected');el.setAttribute('aria-pressed','false');}
+ else{selectedEvidence.add(which);el.classList.add('selected');el.setAttribute('aria-pressed','true');}
+ el.querySelector('.select-state').textContent=selectedEvidence.has(which)?'[ SELECTED ✓ ]':'[ SELECT ]';
+}
 function sendEvidence(){
- document.getElementById('evidenceSent').classList.remove('hidden');
- document.querySelector('#step2 .btn.pink').textContent='[ ФОТО ОТПРАВЛЕНЫ ✓ ]';
- document.querySelector('#step2 .btn.pink').disabled=true;
+ if(analysisRunning)return;
+ if(selectedEvidence.size===0){document.getElementById('sendEvidenceButton').textContent='[ СНАЧАЛА ВЫБЕРИ ФОТО ]';setTimeout(()=>{if(!analysisRunning)document.getElementById('sendEvidenceButton').textContent='[ ПОДТВЕРДИТЬ ВЫБОР ]';},1700);return;}
+ analysisRunning=true;
+ const panel=document.getElementById('analysisPanel');panel.classList.remove('hidden');
+ const button=document.getElementById('sendEvidenceButton');button.disabled=true;button.textContent='[ ANALYZING… ]';
+ const lines=[
+  ['Инициализация анализа…','INITIALIZING',12],
+  ['Проверка метаданных файла…','VERIFYING FILES',35],
+  ['Сопоставление координат…','CHECKING LOCATION',61],
+  ['Сверка объекта с контрактом…','MATCHING TARGET',84],
+  ['Доказательства подтверждены.','EVIDENCE ACCEPTED',100]
+ ];
+ let i=0;
+ function tick(){
+  const item=lines[i];document.getElementById('analysisLine').textContent=item[0];
+  document.getElementById('analysisStatus').textContent=item[1];
+  document.getElementById('analysisBar').style.width=item[2]+'%';i++;
+  if(i<lines.length)setTimeout(tick,850);
+  else setTimeout(()=>{document.getElementById('evidenceSent').classList.remove('hidden');document.getElementById('sendEvidenceButton').classList.add('hidden');},650);
+ }
+ tick();
 }
 function revealReward(){
  goStep(4);
@@ -265,8 +325,15 @@ function replay(){
  document.querySelectorAll('main section').forEach(s=>s.classList.remove('active'));
  document.getElementById('intro').classList.remove('hidden');
  document.getElementById('evidenceSent').classList.add('hidden');
- document.querySelector('#step2 .btn.pink').disabled=false;
- document.querySelector('#step2 .btn.pink').textContent='[ ОТПРАВИТЬ ФОТО ЗАКАЗЧИКУ ]';
+ document.getElementById('analysisPanel').classList.add('hidden');
+ document.getElementById('sendEvidenceButton').classList.remove('hidden');
+ document.getElementById('sendEvidenceButton').disabled=false;
+ document.getElementById('sendEvidenceButton').textContent='[ ПОДТВЕРДИТЬ ВЫБОР ]';
+ document.getElementById('analysisBar').style.width='0';
+ document.getElementById('analysisLine').textContent='Инициализация анализа…';
+ document.getElementById('analysisStatus').textContent='WAITING FOR INPUT';
+ selectedEvidence.clear();analysisRunning=false;
+ ['evidenceFront','evidenceRear'].forEach(id=>{const el=document.getElementById(id);el.classList.remove('selected');el.setAttribute('aria-pressed','false');el.querySelector('.select-state').textContent='[ SELECT ]';});
  document.getElementById('rewardCard').classList.remove('revealed');
  document.querySelector('.progress').style.display='none';
  document.getElementById('progressbar').style.width='0';
